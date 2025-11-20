@@ -64,7 +64,7 @@ class ImmortalizerService : Service() {
         if (!pipeCheck.waitFor(1, TimeUnit.SECONDS)) {
             pipeCheck.destroy()
             val su = ProcessBuilder(
-                "su", "-c", "id -u; while true; do eval \$(cat '$pipeFile' || echo break); done"
+                "su", "-c", "id -u; while true; do source '$pipeFile' || break; done"
             ).start()
             if (su.inputStream.bufferedReader().readLine() != "0") {
                 su.destroy()
