@@ -45,7 +45,7 @@ class ImmortalizerService : Service() {
 
     private fun checkAndRun(): String? {
         val systemPath = System.getenv("PATH")?.split(":") ?: return getString(R.string.no_path)
-        arrayOf("su", "sh", "mkfifo").filter { program ->
+        arrayOf("su", "sh", "mkfifo", "chmod").filter { program ->
             !systemPath.any { directory ->
                 Path(
                     directory, program
@@ -55,10 +55,13 @@ class ImmortalizerService : Service() {
             if (it.isNotEmpty()) return getString(R.string.no_programs) + it.joinToString(prefix = " ")
         }
 
-        if (pipeFile.notExists()) ProcessBuilder("mkfifo", pipeFile.toString()).start().waitFor()
-            .let {
-                if (it != 0) return getString(R.string.mkfifo_failed)
+        if (pipeFile.notExists()) {
+            var result = ProcessBuilder("mkfifo", pipeFile.toString()).start().waitFor()
+            if (result == 0) {
+                result = ProcessBuilder("chmod", "666", pipeFile.toString()).start().waitFor()
             }
+            if (result != 0) return getString(R.string.mkfifo_failed)
+        }
 
         val pipeCheck = ProcessBuilder("sh", "-c", "echo true > '$pipeFile'").start()
         if (!pipeCheck.waitFor(1, TimeUnit.SECONDS)) {
