@@ -28,7 +28,7 @@ jobs:
         run: gradle --no-daemon wrapper && ./gradlew --no-daemon assembleRelease
 
       - name: Upload binary to release
-        uses: svenstaro/upload-release-action@v2.11.2
+        uses: svenstaro/upload-release-action@2.11.2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref }}
