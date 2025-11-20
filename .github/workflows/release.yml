@@ -24,8 +24,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
+      - name: Create wrapper
+        run: gradle --no-daemon --stacktrace wrapper
+
       - name: Build app
-        run: gradle --no-daemon wrapper && ./gradlew --no-daemon assembleRelease
+        run: ./gradlew --no-daemon assembleRelease
 
       - name: Upload binary to release
         uses: svenstaro/upload-release-action@2.11.2
